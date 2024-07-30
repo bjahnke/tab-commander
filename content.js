@@ -54,6 +54,17 @@
       outputDiv.textContent = message;
     }
   
+    // Listen for messages to toggle console visibility
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === "toggleConsole") {
+        if (request.consoleOpen) {
+          document.getElementById('tab-commander-console').style.display = 'block';
+        } else {
+          document.getElementById('tab-commander-console').style.display = 'none';
+        }
+      }
+    });
+  
     // Toggle console visibility based on saved state
     chrome.storage.local.get("consoleOpen", (data) => {
       if (data.consoleOpen) {
