@@ -1,0 +1,31 @@
+{
+  "name": "tab-commander",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/background.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "setupFiles": ["./jest.setup.js"],
+    "testEnvironment": "jsdom",
+    "transform": {}
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bjahnke/tab-commander.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bjahnke/tab-commander/issues"
+  },
+  "homepage": "https://github.com/bjahnke/tab-commander#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^24.1.1"
+  }
+}

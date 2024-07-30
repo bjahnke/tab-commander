@@ -1,0 +1,1 @@
+When sandboxing the app, remember to completely reload the extension if changes are made to the manifest file!
