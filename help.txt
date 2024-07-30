@@ -1,0 +1,33 @@
+# Tab Commander
+
+Description:
+  Tab Commander is a command-line tool for managing browser bookmarks and tabs.
+
+Usage:
+  tab-commander [OPTION] COMMAND [ARGS]
+
+Commands:
+  open [bookmark-alias]          Opens the address that the bookmark alias points to. 
+                                 Opens in a new tab by default. 
+                                 Use the -r (replace) option to open in the current active tab.
+
+  add [bookmark-alias]           Creates a new bookmark for the current active tab and assigns the given alias to that bookmark. 
+                                 Stores the mapping to non-volatile memory.
+
+  list                           Lists all bookmark-alias to bookmark address mappings.
+
+Options:
+  -r, --replace                  Opens the bookmark in the current active tab when used with the `open` command.
+
+Examples:
+  # Open the bookmark alias "work" in a new tab
+  $ tab-commander open work
+
+  # Open the bookmark alias "work" in the current active tab
+  $ tab-commander open -r work
+
+  # Add a new bookmark with alias "work" for the current active tab
+  $ tab-commander add work
+
+  # List all bookmark-alias to bookmark address mappings
+  $ tab-commander list
