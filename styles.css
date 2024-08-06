@@ -1,53 +1,52 @@
 #tab-commander-console {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100%;
-    background-color: #333;
-    color: #fff;
-    display: none;
-    flex-direction: column;
-    z-index: 9999;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  }
-  
-  #tab-commander-header {
-    background-color: #444;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  #tab-commander-header span {
-    font-size: 16px;
-  }
-  
-  #tab-commander-header button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  #tab-commander-input {
-    width: 100%;
-    padding: 10px;
-    margin: 0;
-    background-color: #222;
-    border: none;
-    color: #fff;
-    font-size: 14px;
-    resize: none;
-    height: 50px;
-  }
-  
-  #tab-commander-output {
-    flex-grow: 1;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 14px;
-  }
-  
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-color: #333;
+  color: #fff;
+  display: none; /* Initially hidden */
+  flex-direction: column;
+  z-index: 9999;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+}
+
+#tab-commander-header {
+  background-color: #444;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#tab-commander-header span {
+  font-size: 16px;
+}
+
+#tab-commander-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#tab-commander-input {
+  width: 100%;
+  padding: 10px;
+  margin: 0;
+  background-color: #222;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  resize: none;
+  height: 50px;
+}
+
+#tab-commander-output {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+}

@@ -21,7 +21,7 @@
   },
   "web_accessible_resources": [{
     "matches": ["<all_urls>"],
-    "resources": ["/src/content-main.js", "content-main.js"]
+    "resources": ["/src/content-main.js", "/src/command.js"]
  }],
   "content_scripts": [
     {

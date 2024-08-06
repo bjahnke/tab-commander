@@ -1,36 +1,31 @@
+import commands from "./commands";
+// background.js
+
+// Function to handle when the extension is installed
+function onInstalled() {
+  chrome.storage.local.set({ bookmarks: {}, consoleOpen: false });
+  chrome.action.onClicked.addListener(onActionClicked);
+}
+
+// Function to handle browser action button click
+function onActionClicked(tab) {
+  chrome.storage.local.get("consoleOpen", (data) => {
+    const consoleOpen = !data.consoleOpen;
+    chrome.storage.local.set({ consoleOpen: consoleOpen });
+    chrome.tabs.sendMessage(tab.id, { action: "toggleConsole", consoleOpen: consoleOpen });
+  });
+}
+
+// Function to handle incoming messages
 function handleMessages(message, sender, sendResponse) {
-  if (message.action === "addBookmark") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const url = tabs[0].url;
-      chrome.storage.local.get("bookmarks", (data) => {
-        let bookmarks = data.bookmarks || {};
-        bookmarks[message.alias] = url;
-        chrome.storage.local.set({ bookmarks: bookmarks });
-        sendResponse({ status: "success", alias: message.alias, url: url });
-      });
-    });
-  } else if (message.action === "openBookmark") {
-    chrome.storage.local.get("bookmarks", (data) => {
-      const url = data.bookmarks[message.alias];
-      if (url) {
-        if (message.replace) {
-          chrome.tabs.update({ url: url });
-        } else {
-          chrome.tabs.create({ url: url });
-        }
-        sendResponse({ status: "success", alias: message.alias, url: url });
-      } else {
-        sendResponse({ status: "error", message: "Bookmark not found" });
-      }
-    });
-  } else if (message.action === "listBookmarks") {
-    chrome.storage.local.get("bookmarks", (data) => {
-      sendResponse({ status: "success", bookmarks: data.bookmarks });
-    });
-  }
+  commands[message.action].execute(message, sendResponse);
   return true;
 }
 
+// Register the listeners
+chrome.runtime.onInstalled.addListener(onInstalled);
 chrome.runtime.onMessage.addListener(handleMessages);
 
-export { handleMessages };
+export {
+  handleMessages,
+}; // Export for testing

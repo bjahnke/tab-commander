@@ -1,76 +1,95 @@
-export function displayOutput(message) {
-    let outputDiv = document.getElementById('tab-commander-output');
-    outputDiv.textContent = message;
+import { commandCollection, displayOutput } from "./commands";
+
+/**
+ * Creates the Tab Commander console and appends it to the document body.
+ * Sets up event listeners for the close button and command input.
+ */
+export function createConsole() {
+  let consoleDiv = document.createElement('div');
+  consoleDiv.id = 'tab-commander-console';
+  consoleDiv.innerHTML = `
+    <div id="tab-commander-header">
+      <span>Tab Commander</span>
+      <button id="tab-commander-close">X</button>
+    </div>
+    <textarea id="tab-commander-input" placeholder="Enter command..."></textarea>
+    <div id="tab-commander-output"></div>
+  `;
+  document.body.appendChild(consoleDiv);
+
+  document.getElementById('tab-commander-close').addEventListener('click', closeConsole);
+  document.getElementById('tab-commander-input').addEventListener('keydown', handleCommandInput);
+}
+
+/**
+ * Closes the Tab Commander console and sends a message to the background script to update the console state.
+ */
+export function closeConsole() {
+  document.getElementById('tab-commander-console').style.display = 'none';
+  chrome.runtime.sendMessage({ action: 'toggleConsole' });
+}
+
+/**
+ * Handles the command input. Parses the command and calls the appropriate handler function.
+ * Clears the input field after processing the command.
+ * @param {KeyboardEvent} event - The keyboard event triggered by the Enter key.
+ */
+export function handleCommandInput(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    const commandInput = document.getElementById('tab-commander-input');
+    const command = commandInput.value.trim();
+    const [action, ...args] = command.split(' ');
+
+    const commandObj = commandCollection[action];
+    if (commandObj) {
+      commandObj.handle(args);
+    } else {
+      displayOutput(`Unknown command: ${action}`);
+    }
+    // Clear the input field after processing the command
+    commandInput.value = '';
   }
-  
+}
+
+
+/**
+ * Toggles the visibility of the Tab Commander console based on messages from the background script.
+ * @param {Object} request - The request message from the background script.
+ */
+export function toggleConsoleVisibility(request) {
+  if (request.action === "toggleConsole") {
+    const consoleDiv = document.getElementById('tab-commander-console');
+    if (request.consoleOpen) {
+      consoleDiv.style.display = 'block';
+    } else {
+      consoleDiv.style.display = 'none';
+    }
+  }
+}
+
+/**
+ * Initializes the visibility of the Tab Commander console based on the saved state in local storage.
+ */
+export function initializeConsoleVisibility() {
+  chrome.storage.local.get("consoleOpen", (data) => {
+    if (data.consoleOpen) {
+      document.getElementById('tab-commander-console').style.display = 'block';
+    }
+  });
+}
+
+/**
+ * Main function to initialize the Tab Commander console.
+ * Sets up event listeners and initializes the console visibility.
+ */
 export function main() {
-      let consoleDiv = document.createElement('div');
-      consoleDiv.id = 'tab-commander-console';
-      consoleDiv.innerHTML = `
-        <div id="tab-commander-header">
-          <span>Tab Commander</span>
-          <button id="tab-commander-close">X</button>
-        </div>
-        <textarea id="tab-commander-input" placeholder="Enter command..."></textarea>
-        <div id="tab-commander-output"></div>
-      `;
-      document.body.appendChild(consoleDiv);
-    
-      document.getElementById('tab-commander-close').addEventListener('click', () => {
-        document.getElementById('tab-commander-console').style.display = 'none';
-        chrome.runtime.sendMessage({ action: 'toggleConsole' });
-      });
-    
-      document.getElementById('tab-commander-input').addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          let commandInput = document.getElementById('tab-commander-input').value;
-          let [command, ...args] = commandInput.split(' ');
-    
-          if (command === 'open') {
-            let alias = args[0];
-            let replace = args.includes('-r');
-            chrome.runtime.sendMessage({ action: 'openBookmark', alias: alias, replace: replace }, handleResponse);
-          } else if (command === 'add') {
-            let alias = args[0];
-            chrome.runtime.sendMessage({ action: 'addBookmark', alias: alias }, handleResponse);
-          } else if (command === 'list') {
-            chrome.runtime.sendMessage({ action: 'listBookmarks' }, handleResponse);
-          } else {
-            displayOutput(`Unknown command: ${command}`);
-          }
-        }
-      });
-    
-      function handleResponse(response) {
-        if (response.status === 'success') {
-          if (response.alias) {
-            displayOutput(`Success: ${response.alias} -> ${response.url}`);
-          } else {
-            displayOutput('Bookmarks: ' + JSON.stringify(response.bookmarks, null, 2));
-          }
-        } else {
-          displayOutput(`Error: ${response.message}`);
-        }
-      }
-    
-  
-    
-      // Listen for messages to toggle console visibility
-      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === "toggleConsole") {
-          if (request.consoleOpen) {
-            document.getElementById('tab-commander-console').style.display = 'block';
-          } else {
-            document.getElementById('tab-commander-console').style.display = 'none';
-          }
-        }
-      });
-    
-      // Toggle console visibility based on saved state
-      chrome.storage.local.get("consoleOpen", (data) => {
-        if (data.consoleOpen) {
-          document.getElementById('tab-commander-console').style.display = 'block';
-        }
-      });
-  }
+  // Initialize the console
+  createConsole();
+
+  // Listen for messages to toggle console visibility
+  chrome.runtime.onMessage.addListener(toggleConsoleVisibility);
+
+  // Set initial console visibility based on saved state
+  initializeConsoleVisibility();
+}
